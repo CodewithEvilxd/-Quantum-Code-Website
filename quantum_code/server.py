@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 mcp = FastMCP(settings.server_name)
 
+
 @mcp.tool()
 @mcp_monitor
 async def codereview(
@@ -58,6 +59,7 @@ async def codereview(
             "content": f"**Tool execution error**\n\nAn error occurred: {str(e)[:200]}",
         }
 
+
 @mcp.tool()
 @mcp_monitor
 async def chat(
@@ -89,6 +91,7 @@ async def chat(
             "thread_id": args.get("thread_id", "unknown"),
             "content": f"**Tool execution error**\n\nAn error occurred: {str(e)[:200]}",
         }
+
 
 @mcp.tool()
 @mcp_monitor
