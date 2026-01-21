@@ -1,9 +1,9 @@
 [project]
 name = "quantum-code"
-version = "0.1.1"
+version = "0.1.4"
 description = "Multi-Model Code Review and Analysis MCP Server for Claude Code"
 readme = "README_PYPI.md"
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.11,<3.15"
 license = "MIT"
 authors = [
     {name = "Nishant Gaurav", email = "codewithevilxd@gmail.com"}

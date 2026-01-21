@@ -1,6 +1,7 @@
 """FastMCP server with MCP tool wrappers."""
 
 import logging
+import uuid
 
 from fastmcp import FastMCP
 
@@ -23,38 +24,137 @@ logger = logging.getLogger(__name__)
 
 mcp = FastMCP(settings.server_name)
 
-codereview = create_mcp_wrapper(
-    CodeReviewRequest,
-    codereview_impl,
+@mcp.tool()
+@mcp_monitor
+async def codereview(
+    content: str,
+    models: list[str] | None = None,
+    thread_id: str | None = None,
+    relevant_files: list[str] | None = None,
+    issues_found: list[dict] | None = None,
+) -> dict:
     """Systematic code review using external models.
-Covers quality, security, performance, and architecture.""",
-)
-codereview = mcp.tool()(mcp_monitor(codereview))
+    Covers quality, security, performance, and architecture."""
+    args = {
+        "content": content,
+        "models": models,
+        "thread_id": thread_id,
+        "relevant_files": relevant_files,
+        "issues_found": issues_found,
+    }
+    args = {k: v for k, v in args.items() if v is not None}
 
-chat = create_mcp_wrapper(
-    ChatRequest,
-    chat_impl,
+    if "thread_id" not in args or args.get("thread_id") is None:
+        args["thread_id"] = str(uuid.uuid4())
+
+    try:
+        model = CodeReviewRequest(**args)
+        return await codereview_impl(**model.model_dump())
+    except Exception as e:
+        logger.exception(f"Error in codereview: {e}")
+        return {
+            "status": "error",
+            "thread_id": args.get("thread_id", "unknown"),
+            "content": f"**Tool execution error**\n\nAn error occurred: {str(e)[:200]}",
+        }
+
+@mcp.tool()
+@mcp_monitor
+async def chat(
+    content: str,
+    models: list[str] | None = None,
+    thread_id: str | None = None,
+    relevant_files: list[str] | None = None,
+) -> dict:
     """General chat with AI assistant.
-Supports multi-turn conversations with project context and file inclusion.""",
-)
-chat = mcp.tool()(mcp_monitor(chat))
+    Supports multi-turn conversations with project context and file inclusion."""
+    args = {
+        "content": content,
+        "models": models,
+        "thread_id": thread_id,
+        "relevant_files": relevant_files,
+    }
+    args = {k: v for k, v in args.items() if v is not None}
 
-compare = create_mcp_wrapper(
-    CompareRequest,
-    compare_impl,
+    if "thread_id" not in args or args.get("thread_id") is None:
+        args["thread_id"] = str(uuid.uuid4())
+
+    try:
+        model = ChatRequest(**args)
+        return await chat_impl(**model.model_dump())
+    except Exception as e:
+        logger.exception(f"Error in chat: {e}")
+        return {
+            "status": "error",
+            "thread_id": args.get("thread_id", "unknown"),
+            "content": f"**Tool execution error**\n\nAn error occurred: {str(e)[:200]}",
+        }
+
+@mcp.tool()
+@mcp_monitor
+async def compare(
+    content: str,
+    models: list[str] | None = None,
+    thread_id: str | None = None,
+    relevant_files: list[str] | None = None,
+) -> dict:
     """Compare responses from multiple AI models.
-Runs the same content against all specified models in parallel.
-Supports multi-turn conversations with project context and file inclusion.""",
-)
-compare = mcp.tool()(mcp_monitor(compare))
+    Runs the same content against all specified models in parallel.
+    Supports multi-turn conversations with project context and file inclusion."""
+    args = {
+        "content": content,
+        "models": models,
+        "thread_id": thread_id,
+        "relevant_files": relevant_files,
+    }
+    args = {k: v for k, v in args.items() if v is not None}
 
-debate = create_mcp_wrapper(
-    DebateRequest,
-    debate_impl,
+    if "thread_id" not in args or args.get("thread_id") is None:
+        args["thread_id"] = str(uuid.uuid4())
+
+    try:
+        model = CompareRequest(**args)
+        return await compare_impl(**model.model_dump())
+    except Exception as e:
+        logger.exception(f"Error in compare: {e}")
+        return {
+            "status": "error",
+            "thread_id": args.get("thread_id", "unknown"),
+            "content": f"**Tool execution error**\n\nAn error occurred: {str(e)[:200]}",
+        }
+
+
+@mcp.tool()
+@mcp_monitor
+async def debate(
+    content: str,
+    models: list[str] | None = None,
+    thread_id: str | None = None,
+    relevant_files: list[str] | None = None,
+) -> dict:
     """Multi-model debate: Step 1 (independent answers) + Step 2 (debate/critique).
-Each model provides independent answer, then reviews all responses and votes.""",
-)
-debate = mcp.tool()(mcp_monitor(debate))
+    Each model provides independent answer, then reviews all responses and votes."""
+    args = {
+        "content": content,
+        "models": models,
+        "thread_id": thread_id,
+        "relevant_files": relevant_files,
+    }
+    args = {k: v for k, v in args.items() if v is not None}
+
+    if "thread_id" not in args or args.get("thread_id") is None:
+        args["thread_id"] = str(uuid.uuid4())
+
+    try:
+        model = DebateRequest(**args)
+        return await debate_impl(**model.model_dump())
+    except Exception as e:
+        logger.exception(f"Error in debate: {e}")
+        return {
+            "status": "error",
+            "thread_id": args.get("thread_id", "unknown"),
+            "content": f"**Tool execution error**\n\nAn error occurred: {str(e)[:200]}",
+        }
 
 
 @mcp.tool()

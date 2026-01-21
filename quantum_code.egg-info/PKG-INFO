@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: quantum-code
-Version: 0.1.1
+Version: 0.1.4
 Summary: Multi-Model Code Review and Analysis MCP Server for Claude Code
 Author-email: Nishant Gaurav <codewithevilxd@gmail.com>
 License-Expression: MIT
@@ -18,7 +18,7 @@ Classifier: Programming Language :: Python :: 3.13
 Classifier: Topic :: Software Development :: Quality Assurance
 Classifier: Topic :: Software Development :: Testing
 Classifier: Typing :: Typed
-Requires-Python: <3.14,>=3.11
+Requires-Python: <3.15,>=3.11
 Description-Content-Type: text/markdown
 License-File: LICENSE
 Requires-Dist: fastapi>=0.127.0
