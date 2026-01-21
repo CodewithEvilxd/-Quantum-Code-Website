@@ -1,6 +1,7 @@
 LICENSE
 MANIFEST.in
 README.md
+README_PYPI.md
 pyproject.toml
 quantum_code/__init__.py
 quantum_code/__main__.py
